@@ -2,6 +2,9 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "node:http";
 import multer from "multer";
 import { openai } from "./replit_integrations/image/client";
+import { registerChatRoutes } from "./replit_integrations/chat";
+import { registerImageRoutes } from "./replit_integrations/image";
+import { registerAudioRoutes } from "./replit_integrations/audio";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -36,6 +39,11 @@ STRICT RULES:
 - Generate a short, clear title (max 5 words)`;
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Register integration routes
+  registerChatRoutes(app);
+  registerImageRoutes(app);
+  registerAudioRoutes(app);
+
   app.post(
     "/api/generate-notes",
     upload.array("images", 25),
