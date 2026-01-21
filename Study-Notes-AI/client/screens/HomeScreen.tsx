@@ -157,7 +157,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Image source={appIcon} style={styles.appIcon} />
+          <MaterialIcons name="auto-stories" size={60} color={theme.link} />
           <ThemedText type="h2">Exam Notes</ThemedText>
           <ThemedText
             type="body"

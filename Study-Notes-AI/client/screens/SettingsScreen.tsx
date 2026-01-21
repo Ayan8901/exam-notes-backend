@@ -40,7 +40,7 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <Image source={appIcon} style={styles.appIcon} />
+          <MaterialIcons name="auto-stories" size={60} color={theme.link} />
           <ThemedText type="h2">Settings</ThemedText>
         </View>
 
