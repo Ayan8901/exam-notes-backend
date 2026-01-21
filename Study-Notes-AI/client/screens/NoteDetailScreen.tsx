@@ -12,7 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import * as Clipboard from "expo-clipboard";
@@ -200,7 +200,7 @@ export default function NoteDetailScreen() {
             style={[styles.actionButton, { backgroundColor: theme.backgroundSecondary }]}
             onPress={copyToClipboard}
           >
-            <Ionicons name="copy-outline" size={18} color={theme.text} />
+            <MaterialIcons name="content-copy" size={18} color={theme.text} />
             <ThemedText type="small">Copy</ThemedText>
           </Pressable>
 
@@ -208,7 +208,7 @@ export default function NoteDetailScreen() {
             style={[styles.actionButton, { backgroundColor: theme.backgroundSecondary }]}
             onPress={shareNote}
           >
-            <Ionicons name="share-outline" size={18} color={theme.text} />
+            <MaterialIcons name="share" size={18} color={theme.text} />
             <ThemedText type="small">Share</ThemedText>
           </Pressable>
 
@@ -216,7 +216,7 @@ export default function NoteDetailScreen() {
             style={[styles.actionButton, { backgroundColor: theme.link }]}
             onPress={exportPDF}
           >
-            <Ionicons name="document-outline" size={18} color="#FFFFFF" />
+            <MaterialIcons name="picture-as-pdf" size={18} color="#FFFFFF" />
             <ThemedText type="small" style={{ color: "#FFFFFF" }}>
               PDF
             </ThemedText>
@@ -276,8 +276,8 @@ export default function NoteDetailScreen() {
 
         <View style={styles.metadata}>
           <View style={styles.metadataRow}>
-            <Ionicons
-              name={note.sourceType === "ocr" ? "camera-outline" : "create-outline"}
+            <MaterialIcons
+              name={note.sourceType === "ocr" ? "photo-camera" : "edit"}
               size={14}
               color={theme.textSecondary}
             />

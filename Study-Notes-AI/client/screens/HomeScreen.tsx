@@ -46,9 +46,9 @@ export default function HomeScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      quality: 0.8,
+      quality: 0.5,
       selectionLimit: 25,
     });
 
@@ -68,7 +68,7 @@ export default function HomeScreen() {
     }
 
     const result = await ImagePicker.launchCameraAsync({
-      quality: 0.8,
+      quality: 0.5,
     });
 
     if (!result.canceled && result.assets) {
@@ -218,7 +218,7 @@ export default function HomeScreen() {
                     ]}
                     onPress={() => removeImage(index)}
                   >
-                    <Ionicons name="close" size={14} color="#FFFFFF" />
+                    <MaterialIcons name="close" size={14} color="#FFFFFF" />
                   </Pressable>
                 </View>
               ))}

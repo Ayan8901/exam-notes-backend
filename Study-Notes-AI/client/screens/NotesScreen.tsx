@@ -10,7 +10,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ThemedView } from "@/components/ThemedView";
@@ -71,8 +71,8 @@ export default function NotesScreen() {
     >
       <View style={styles.noteContent}>
         <View style={styles.noteHeader}>
-          <Ionicons
-            name={item.sourceType === "ocr" ? "camera-outline" : "create-outline"}
+          <MaterialIcons
+            name={item.sourceType === "ocr" ? "photo-camera" : "edit"}
             size={16}
             color={theme.link}
           />
@@ -95,7 +95,7 @@ export default function NotesScreen() {
         style={[styles.deleteButton, { backgroundColor: theme.error }]}
         onPress={() => handleDelete(item.id)}
       >
-        <Ionicons name="trash-outline" size={16} color="#FFFFFF" />
+        <MaterialIcons name="delete-outline" size={16} color="#FFFFFF" />
       </Pressable>
     </Pressable>
   );

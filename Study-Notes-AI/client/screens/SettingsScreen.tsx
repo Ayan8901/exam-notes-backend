@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Pressable, Switch, ScrollView, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -20,10 +20,10 @@ export default function SettingsScreen() {
   const { theme } = useTheme();
   const { themeMode, setThemeMode } = useThemeMode();
 
-  const themeOptions: { value: ThemeOption; label: string; icon: "sunny-outline" | "moon-outline" | "phone-portrait-outline" }[] = [
-    { value: "light", label: "Light", icon: "sunny-outline" },
-    { value: "dark", label: "Dark", icon: "moon-outline" },
-    { value: "system", label: "System", icon: "phone-portrait-outline" },
+  const themeOptions: { value: ThemeOption; label: string; icon: string }[] = [
+    { value: "light", label: "Light", icon: "light-mode" },
+    { value: "dark", label: "Dark", icon: "dark-mode" },
+    { value: "system", label: "System", icon: "settings-suggest" },
   ];
 
   return (
@@ -66,7 +66,7 @@ export default function SettingsScreen() {
                 ]}
                 onPress={() => setThemeMode(option.value)}
               >
-                <Ionicons
+                <MaterialIcons
                   name={option.icon}
                   size={20}
                   color={themeMode === option.value ? "#FFFFFF" : theme.text}

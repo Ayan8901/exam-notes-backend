@@ -128,7 +128,7 @@ export default function CreateNoteScreen() {
               { backgroundColor: theme.error + "20" },
             ]}
           >
-            <Ionicons name="alert-circle-outline" size={16} color={theme.error} />
+            <MaterialIcons name="error-outline" size={16} color={theme.error} />
             <ThemedText type="small" style={{ color: theme.error }}>
               {error}
             </ThemedText>
@@ -173,19 +173,19 @@ export default function CreateNoteScreen() {
             Tips for Best Results
           </ThemedText>
           <View style={styles.tipItem}>
-            <Ionicons name="checkmark-circle-outline" size={16} color={theme.success} />
+            <MaterialIcons name="check-circle-outline" size={16} color={theme.success} />
             <ThemedText type="small" style={{ color: theme.textSecondary }}>
               Include key definitions and concepts
             </ThemedText>
           </View>
           <View style={styles.tipItem}>
-            <Ionicons name="checkmark-circle-outline" size={16} color={theme.success} />
+            <MaterialIcons name="check-circle-outline" size={16} color={theme.success} />
             <ThemedText type="small" style={{ color: theme.textSecondary }}>
               Add formulas and important equations
             </ThemedText>
           </View>
           <View style={styles.tipItem}>
-            <Ionicons name="checkmark-circle-outline" size={16} color={theme.success} />
+            <MaterialIcons name="check-circle-outline" size={16} color={theme.success} />
             <ThemedText type="small" style={{ color: theme.textSecondary }}>
               Include examples when available
             </ThemedText>
