@@ -10,7 +10,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -151,11 +151,7 @@ export default function CreateNoteScreen() {
           {isProcessing ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Ionicons
-              name="flash-outline"
-              size={20}
-              color={textInput.trim() ? "#FFFFFF" : theme.textSecondary}
-            />
+            <MaterialIcons name="bolt" size={20} color={textInput.trim() ? "#FFFFFF" : theme.textSecondary} />
           )}
           <ThemedText
             style={[

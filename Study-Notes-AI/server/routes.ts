@@ -11,32 +11,28 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-const NOTE_GENERATION_PROMPT = `You are an exam prep expert. Create ultra-concise, high-yield revision notes.
+const NOTE_GENERATION_PROMPT = `You are an expert exam revision specialist. Create ULTRA-CONCISE, high-yield revision notes.
 
-FORMAT (use ## for sections, - for bullets):
+STRICT FORMAT (Use ## for headers, - for bullets):
+## [Main Topic]
+- Definition: [1-sentence max]
+- Key Formula: [Equation + Units]
+- Step: [Actionable step]
+- Fact: [Key keyword/date/value]
 
-## Definition
-- One-line definition only
+HIERARCHY RULES:
+- Main Topic (##)
+  - Sub-topic (### if needed, else bullet)
+    - Key fact (bullet)
 
-## Key Points
-- 3-5 most important facts
-- What examiners ask about
-
-## Formulas
-- Key equations (if any)
-- Include units
-
-## Must Remember
-- Critical facts to memorize
-- Common exam traps
-
-STRICT RULES:
-- Maximum 8 words per bullet point
-- NO explanations or examples
-- NO paragraphs - bullets only
-- Focus on facts that appear in exams
-- Skip sections if not applicable
-- Generate a short, clear title (max 5 words)`;
+STRICT CONTENT RULES:
+- MAX 1 LINE per bullet point.
+- MAX 8-10 words per bullet point.
+- BULLETS ONLY. No paragraphs.
+- NO filler words (e.g., "The," "Additionally," "In conclusion").
+- FOCUS on: Definitions, Formulas, Steps, Keywords.
+- EXAM-ORIENTED: Only include what is likely to be tested.
+- TITLE: Concise title (max 4 words).`;
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register integration routes

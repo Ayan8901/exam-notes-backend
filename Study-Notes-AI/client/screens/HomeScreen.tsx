@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
@@ -187,7 +187,7 @@ export default function HomeScreen() {
               onPress={pickImages}
               disabled={isProcessing}
             >
-              <Ionicons name="images-outline" size={20} color="#FFFFFF" />
+              <MaterialIcons name="photo-library" size={20} color="#FFFFFF" />
               <ThemedText style={styles.buttonText}>Gallery</ThemedText>
             </Pressable>
 
@@ -199,7 +199,7 @@ export default function HomeScreen() {
               onPress={takePhoto}
               disabled={isProcessing}
             >
-              <Ionicons name="camera-outline" size={20} color={theme.text} />
+              <MaterialIcons name="photo-camera" size={20} color={theme.text} />
               <ThemedText style={[styles.buttonText, { color: theme.text }]}>
                 Camera
               </ThemedText>
@@ -251,8 +251,8 @@ export default function HomeScreen() {
             {isProcessing ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Ionicons
-                name="flash-outline"
+              <MaterialIcons
+                name="bolt"
                 size={20}
                 color={selectedImages.length > 0 ? "#FFFFFF" : theme.textSecondary}
               />
@@ -281,7 +281,7 @@ export default function HomeScreen() {
             ]}
             onPress={() => navigation.navigate("CreateNote")}
           >
-            <Ionicons name="create-outline" size={20} color={theme.text} />
+            <MaterialIcons name="edit" size={20} color={theme.text} />
             <ThemedText style={{ color: theme.text }}>
               Or paste text to convert
             </ThemedText>
