@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Pressable, Switch, ScrollView, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -48,7 +48,6 @@ export default function SettingsScreen() {
           <ThemedText type="h4" style={styles.sectionTitle}>
             Appearance
           </ThemedText>
-
           <View
             style={[
               styles.optionGroup,
@@ -81,6 +80,46 @@ export default function SettingsScreen() {
                 </ThemedText>
               </Pressable>
             ))}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <ThemedText type="h4" style={styles.sectionTitle}>
+            Premium Upgrade
+          </ThemedText>
+          <View
+            style={[
+              styles.premiumCard,
+              { backgroundColor: theme.link + "15", borderColor: theme.link },
+            ]}
+          >
+            <View style={styles.premiumHeader}>
+              <MaterialIcons name="stars" size={24} color={theme.link} />
+              <ThemedText type="h4" style={{ color: theme.link }}>
+                Exam Notes Pro
+              </ThemedText>
+            </View>
+            <ThemedText style={styles.premiumPrice}>$9.99 permanent</ThemedText>
+            <View style={styles.premiumFeatures}>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check" size={16} color={theme.success} />
+                <ThemedText type="small">Unlimited OCR Scans</ThemedText>
+              </View>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check" size={16} color={theme.success} />
+                <ThemedText type="small">No Advertisements</ThemedText>
+              </View>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check" size={16} color={theme.success} />
+                <ThemedText type="small">Priority AI Generation</ThemedText>
+              </View>
+            </View>
+            <Pressable
+              style={[styles.buyButton, { backgroundColor: theme.link }]}
+              onPress={() => alert("Payment integration would go here")}
+            >
+              <ThemedText style={styles.buyButtonText}>Upgrade Now</ThemedText>
+            </Pressable>
           </View>
         </View>
 
@@ -183,5 +222,38 @@ const styles = StyleSheet.create({
   footerText: {
     textAlign: "center",
     lineHeight: 20,
+  },
+  premiumCard: {
+    borderRadius: BorderRadius.md,
+    padding: Spacing.lg,
+    borderWidth: 2,
+    gap: Spacing.md,
+  },
+  premiumHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  premiumPrice: {
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  premiumFeatures: {
+    gap: Spacing.sm,
+  },
+  featureItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  buyButton: {
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    alignItems: "center",
+    marginTop: Spacing.sm,
+  },
+  buyButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "700",
   },
 });
