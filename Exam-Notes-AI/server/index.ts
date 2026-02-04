@@ -229,22 +229,15 @@ function setupErrorHandler(app: express.Application) {
   setupCors(app);
   setupBodyParsing(app);
   setupRequestLogging(app);
-
   configureExpoAndLanding(app);
 
   const server = await registerRoutes(app);
-
   setupErrorHandler(app);
 
-  const port = parseInt(process.env.PORT || "5000", 10);
-  server.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`express server serving on port ${port}`);
-    },
-  );
+  // 🚀 *** FIXED SECTION FOR RAILWAY ***
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
+  
+  server.listen(PORT, "0.0.0.0", () => {
+    console.log(`✅ Server is live on port ${PORT}`);
+  });
 })();
