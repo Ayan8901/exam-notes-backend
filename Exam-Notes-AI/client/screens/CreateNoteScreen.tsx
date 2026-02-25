@@ -7,10 +7,12 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -20,42 +22,95 @@ import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollV
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { saveNote } from "@/lib/storage";
-import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+/* ---------------- API URLS ---------------- */
+
+// 🤗 HuggingFace OCR backend (replace later)
+const OCR_API = "https://ayan8901-exam-notes-ocr.hf.space/ocr";
+
+// 🚂 Railway notes backend
+const NOTES_API =
+  "https://exam-notes-backend-v2-production.up.railway.app/api/generate-notes-from-text";
+
 export default function CreateNoteScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
 
   const [textInput, setTextInput] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isOCRLoading, setIsOCRLoading] = useState(false);
+  const [isNotesLoading, setIsNotesLoading] = useState(false);
   const [error, setError] = useState("");
+
+  /* ---------------- OCR FUNCTION ---------------- */
+
+  const pickImageAndOCR = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaType.Images,
+      quality: 1,
+    });
+
+    if (result.canceled) return;
+
+    setIsOCRLoading(true);
+    setError("");
+
+    try {
+      const image = result.assets[0];
+
+      const formData = new FormData();
+      formData.append("file", {
+        uri:
+          Platform.OS === "android"
+            ? image.uri
+            : image.uri.replace("file://", ""),
+        name: "image.jpg",
+        type: "image/jpeg",
+      } as any);
+
+      const response = await fetch(OCR_API, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.text) {
+        setTextInput(data.text);
+      } else {
+        setError("OCR returned no text");
+      }
+    } catch (e) {
+      console.log(e);
+      setError("OCR failed");
+    } finally {
+      setIsOCRLoading(false);
+    }
+  };
+
+  /* ---------------- TEXT NOTES FUNCTION ---------------- */
 
   const generateNotes = async () => {
     if (!textInput.trim()) return;
 
-    setIsProcessing(true);
+    setIsNotesLoading(true);
     setError("");
 
     try {
-      const response = await fetch(
-        new URL("/api/generate-notes-from-text", getApiUrl()).toString(),
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ text: textInput.trim() }),
-        }
-      );
+      const response = await fetch(NOTES_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: textInput.trim() }),
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to generate notes");
-      }
+      if (!response.ok) throw new Error("Failed to generate notes");
 
       const data = await response.json();
 
@@ -74,9 +129,11 @@ export default function CreateNoteScreen() {
       console.error("Error generating notes:", err);
       setError("Failed to generate notes. Please try again.");
     } finally {
-      setIsProcessing(false);
+      setIsNotesLoading(false);
     }
   };
+
+  /* ---------------- UI ---------------- */
 
   return (
     <ThemedView style={styles.container}>
@@ -89,16 +146,27 @@ export default function CreateNoteScreen() {
             paddingBottom: insets.bottom + Spacing.xl,
           },
         ]}
-        showsVerticalScrollIndicator={false}
       >
         <View style={styles.section}>
-          <ThemedText type="h4">Paste Your Study Text</ThemedText>
-          <ThemedText type="small" style={{ color: theme.textSecondary }}>
-            Enter textbook content, lecture notes, or any study material to
-            convert into exam-focused notes
-          </ThemedText>
+          <ThemedText type="h4">Paste Text OR Upload Image</ThemedText>
         </View>
 
+        {/* OCR BUTTON */}
+        <Pressable
+          style={[styles.generateButton, { backgroundColor: theme.backgroundSecondary }]}
+          onPress={pickImageAndOCR}
+        >
+          {isOCRLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <MaterialIcons name="image" size={20} color={theme.text} />
+          )}
+          <ThemedText style={{ color: theme.text }}>
+            {isOCRLoading ? "Processing Image..." : "Upload Image for OCR"}
+          </ThemedText>
+        </Pressable>
+
+        {/* TEXT INPUT */}
         <View style={styles.inputContainer}>
           <TextInput
             style={[
@@ -109,25 +177,18 @@ export default function CreateNoteScreen() {
                 borderColor: theme.border,
               },
             ]}
-            placeholder="Paste your study text here..."
+            placeholder="Text will appear here..."
             placeholderTextColor={theme.textSecondary}
             value={textInput}
             onChangeText={setTextInput}
             multiline
             textAlignVertical="top"
           />
-          <ThemedText type="small" style={{ color: theme.textSecondary }}>
-            {textInput.length} characters
-          </ThemedText>
         </View>
 
+        {/* ERROR */}
         {error ? (
-          <View
-            style={[
-              styles.errorContainer,
-              { backgroundColor: theme.error + "20" },
-            ]}
-          >
+          <View style={[styles.errorContainer, { backgroundColor: theme.error + "20" }]}>
             <MaterialIcons name="error-outline" size={16} color={theme.error} />
             <ThemedText type="small" style={{ color: theme.error }}>
               {error}
@@ -135,92 +196,44 @@ export default function CreateNoteScreen() {
           </View>
         ) : null}
 
+        {/* GENERATE NOTES */}
         <Pressable
           style={[
             styles.generateButton,
             {
               backgroundColor:
-                textInput.trim() && !isProcessing
-                  ? theme.link
-                  : theme.backgroundSecondary,
+                textInput.trim() && !isNotesLoading ? theme.link : theme.backgroundSecondary,
             },
           ]}
           onPress={generateNotes}
-          disabled={!textInput.trim() || isProcessing}
+          disabled={!textInput.trim() || isNotesLoading}
         >
-          {isProcessing ? (
-            <ActivityIndicator color="#FFFFFF" />
+          {isNotesLoading ? (
+            <ActivityIndicator color="#fff" />
           ) : (
-            <MaterialIcons name="bolt" size={20} color={textInput.trim() ? "#FFFFFF" : theme.textSecondary} />
+            <MaterialIcons name="bolt" size={20} color="#fff" />
           )}
-          <ThemedText
-            style={[
-              styles.generateButtonText,
-              {
-                color:
-                  textInput.trim() && !isProcessing
-                    ? "#FFFFFF"
-                    : theme.textSecondary,
-              },
-            ]}
-          >
-            {isProcessing ? "Generating Notes..." : "Generate Exam Notes"}
+          <ThemedText style={styles.generateButtonText}>
+            {isNotesLoading ? "Generating..." : "Generate Notes"}
           </ThemedText>
         </Pressable>
-
-        <View style={styles.tips}>
-          <ThemedText type="h4" style={styles.tipsTitle}>
-            Tips for Best Results
-          </ThemedText>
-          <View style={styles.tipItem}>
-            <MaterialIcons name="check-circle-outline" size={16} color={theme.success} />
-            <ThemedText type="small" style={{ color: theme.textSecondary }}>
-              Include key definitions and concepts
-            </ThemedText>
-          </View>
-          <View style={styles.tipItem}>
-            <MaterialIcons name="check-circle-outline" size={16} color={theme.success} />
-            <ThemedText type="small" style={{ color: theme.textSecondary }}>
-              Add formulas and important equations
-            </ThemedText>
-          </View>
-          <View style={styles.tipItem}>
-            <MaterialIcons name="check-circle-outline" size={16} color={theme.success} />
-            <ThemedText type="small" style={{ color: theme.textSecondary }}>
-              Include examples when available
-            </ThemedText>
-          </View>
-        </View>
       </KeyboardAwareScrollViewCompat>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: Spacing.lg,
-    gap: Spacing.xl,
-  },
-  section: {
-    gap: Spacing.xs,
-  },
-  inputContainer: {
-    gap: Spacing.sm,
-  },
+  container: { flex: 1 },
+  scrollView: { flex: 1 },
+  content: { paddingHorizontal: Spacing.lg, gap: Spacing.xl },
+  section: { gap: Spacing.xs },
+  inputContainer: { gap: Spacing.sm },
   textInput: {
     minHeight: 200,
-    maxHeight: 300,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
     padding: Spacing.lg,
     fontSize: 16,
-    lineHeight: 24,
   },
   errorContainer: {
     flexDirection: "row",
@@ -237,19 +250,5 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
     borderRadius: BorderRadius.md,
   },
-  generateButtonText: {
-    fontWeight: "600",
-    fontSize: 16,
-  },
-  tips: {
-    gap: Spacing.md,
-  },
-  tipsTitle: {
-    marginBottom: Spacing.xs,
-  },
-  tipItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
+  generateButtonText: { color: "#fff", fontWeight: "600", fontSize: 16 },
 });

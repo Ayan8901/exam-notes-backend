@@ -1,13 +1,12 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 /**
- * Gets the base URL for the Express API server (e.g., "http://localhost:3000")
+ * Gets the base URL for the Express API server
  * @returns {string} The API base URL
  */
 export function getApiUrl(): string {
-  // Use the Replit domain for mobile/Expo Go compatibility
-  const host = "8dd87735-1898-4167-823c-0134272326b9-00-29mv6oi0cmksg.pike.replit.dev";
-  return `https://${host}`;
+  // Railway deployed backend URL
+  return "https://exam-notes-backend-v2-production.up.railway.app";
 }
 
 async function throwIfResNotOk(res: Response) {
